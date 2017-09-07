@@ -28,6 +28,8 @@ class MailChimp
     private $last_response      = array();
     private $last_request       = array();
 
+    protected $curlOptCallables = array();
+
     /**
      * Create a new instance
      * @param string $api_key Your MailChimp API key
@@ -245,6 +247,10 @@ class MailChimp
                 break;
         }
         
+        foreach($this->curlOptCallables as $callable){
+            $ch = call_user_func($callable, $ch);
+        }
+        
         $responseContent = curl_exec($ch);
         
         $response['headers'] = curl_getinfo($ch);
@@ -416,5 +422,14 @@ class MailChimp
         }
 
         return 418;
+    }
+
+    /**
+     * Registers a callback which can be used to set / override curl options.
+     * @param Callable $action 
+     */
+    public function registerCurlOptCallable(Callable $callback)
+    {
+        $this->curlOptCallables[] = $callback;
     }
 }
