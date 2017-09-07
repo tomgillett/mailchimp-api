@@ -297,7 +297,12 @@ class MailChimp
     private function getHeadersAsArray($headersAsString)
     {
         $headers = array();
-        
+
+        // Proxing can result in multiple HTTP response status codes. Remove all but the last.
+        preg_match_all("/HTTP\/[0-9]{1}\.[0-9]{1}\s/", $headersAsString, $matches, PREG_OFFSET_CAPTURE);
+        $last = array_pop($matches[0]);
+        $headersAsString = substr($headersAsString, $last[1], (strlen($headersAsString) - $last[1]));
+
         foreach (explode("\r\n", $headersAsString) as $i => $line) {
             if ($i === 0) { // HTTP code
                 continue;
