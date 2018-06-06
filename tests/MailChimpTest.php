@@ -1,8 +1,9 @@
 <?php
 
 use \DrewM\MailChimp\MailChimp;
+use PHPUnit\Framework\TestCase;
 
-class MailChimpTest extends PHPUnit_Framework_TestCase
+class MailChimpTest extends TestCase
 {
 
     public function setUp()
@@ -18,14 +19,14 @@ class MailChimpTest extends PHPUnit_Framework_TestCase
 
     public function testInvalidAPIKey()
     {
-        $this->setExpectedException('\Exception');
+        $this->expectException('\Exception');
         $MailChimp = new MailChimp('abc');
     }
 
     public function testTestEnvironment()
     {
         $MC_API_KEY = getenv('MC_API_KEY');
-        $message = 'No environment variables! Copy .env.example -> .env and fill out your MailChimp account details.';
+        $message    = 'No environment variables! Copy .env.example -> .env and fill out your MailChimp account details.';
         $this->assertNotEmpty($MC_API_KEY, $message);
     }
 
@@ -51,9 +52,9 @@ class MailChimpTest extends PHPUnit_Framework_TestCase
 
         $MailChimp = new MailChimp($MC_API_KEY);
 
-        $email = 'Foo@Example.Com';
+        $email    = 'Foo@Example.Com';
         $expected = md5(strtolower($email));
-        $result = $MailChimp->subscriberHash($email);
+        $result   = $MailChimp->subscriberHash($email);
 
         $this->assertEquals($expected, $result);
     }
@@ -78,6 +79,7 @@ class MailChimpTest extends PHPUnit_Framework_TestCase
      * b) enough entries that the curl request will timeout after 1 second.
      * How many this is may depend on your network connection to the Mailchimp servers.
      */
+    /*
     public function testRequestTimeout()
     {
         $this->markTestSkipped('CI server too fast to realistically test.');
@@ -101,4 +103,5 @@ class MailChimpTest extends PHPUnit_Framework_TestCase
         $error = $MailChimp->getLastError();
         $this->assertRegExp( '/Request timed out after 1.\d+ seconds/', $error );
     }
+    */
 }
